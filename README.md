@@ -22,12 +22,12 @@ Welcome to the central repository for the **Datheon Full Stack Web Development I
 
 Each project within this repository tackles a specific domain and architectural challenge:
 
-| Task | Project Name | Focus / Pattern | Primary Tech Stack |
-| :--- | :--- | :--- | :--- |
-| **Task 1** | **Developer Portfolio** | Responsive UI, Micro-interactions, Design Systems | React 19, Tailwind CSS, GSAP, Vite |
-| **Task 2** | **TaskBoard** | Clean Architecture, Domain-Driven Design (DDD), TDD | React 19, TypeScript, Vitest, RTL, Vite |
-| **Task 3** | **WeatherPulse** | Asynchronous API Telemetry, State Caching | React 19, OpenWeather API, Lucide, Vite |
-| **Task 4** | **ShopWave** | Native Web Standards, Vanilla State Management | HTML5 Semantic, CSS3, Vanilla ES Modules |
+| Task | Project Name | Live Demo | Focus / Pattern | Primary Tech Stack |
+| :--- | :--- | :--- | :--- | :--- |
+| **Task 1** | **Developer Portfolio** | [Live Demo ↗](https://portflio-seven-nu.vercel.app/) | Responsive UI, Micro-interactions, Design Systems | React 19, Tailwind CSS, GSAP, Vite |
+| **Task 2** | **TaskBoard** | [Live Demo ↗](https://task-manager-xi-six-42.vercel.app/) | Clean Architecture, Domain-Driven Design (DDD), TDD | React 19, TypeScript, Vitest, RTL, Vite |
+| **Task 3** | **WeatherPulse** | [Live Demo ↗](https://datheon-full-stack-web-development-psi.vercel.app/) | Asynchronous API Telemetry, State Caching | React 19, OpenWeather API, Lucide, Vite |
+| **Task 4** | **ShopWave** | [Live Demo ↗](https://datheonfullstackwebdevelopmentinter-nu.vercel.app/) | Native Web Standards, Vanilla State Management | HTML5 Semantic, CSS3, Vanilla ES Modules |
 
 ---
 
@@ -72,6 +72,7 @@ Datheon_Full_Stack_Web_Development_Internship/
 
 ### Task 1: Modern Interactive Developer Portfolio
 > **Directory**: [`task1/`](./task1)  
+> **Live Demo**: [https://portflio-seven-nu.vercel.app/](https://portflio-seven-nu.vercel.app/)  
 > **Tech**: React 19, Vite, Tailwind CSS, GSAP, Lucide Icons
 
 An interactive portfolio designed to highlight engineering projects, work history, technical proficiencies, and contact information.
@@ -86,6 +87,7 @@ An interactive portfolio designed to highlight engineering projects, work histor
 
 ### Task 2: TaskBoard – Productivity Tracker & Task Manager
 > **Directory**: [`task2/`](./task2)  
+> **Live Demo**: [https://task-manager-xi-six-42.vercel.app/](https://task-manager-xi-six-42.vercel.app/)  
 > **Tech**: React 19, TypeScript, Vite, Vitest, React Testing Library
 
 A feature-rich, accessible task manager designed using **Clean Architecture** and **Domain-Driven Design (DDD)** principles with **zero third-party UI or state dependencies**.
@@ -100,6 +102,7 @@ A feature-rich, accessible task manager designed using **Clean Architecture** an
 
 ### Task 3: WeatherPulse – Real-Time Weather Dashboard
 > **Directory**: [`task3/`](./task3)  
+> **Live Demo**: [https://datheon-full-stack-web-development-psi.vercel.app/](https://datheon-full-stack-web-development-psi.vercel.app/)  
 > **Tech**: React 19, Vite, Lucide React, OpenWeatherMap API
 
 A real-time meteorological dashboard providing current weather conditions, multi-day forecasting, and telemetry analytics for cities worldwide.
@@ -115,6 +118,7 @@ A real-time meteorological dashboard providing current weather conditions, multi
 
 ### Task 4: ShopWave – Modern Vanilla E-Commerce Storefront
 > **Directory**: [`task4/`](./task4)  
+> **Live Demo**: [https://datheonfullstackwebdevelopmentinter-nu.vercel.app/](https://datheonfullstackwebdevelopmentinter-nu.vercel.app/)  
 > **Tech**: Vanilla HTML5, CSS3, ES6 Modules (Zero frameworks, zero dependencies)
 
 A fast, lightweight, and dependency-free storefront showcasing the power of pure web standards, modern DOM APIs, and modular JavaScript.

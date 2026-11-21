@@ -1,6 +1,10 @@
 # ShopWave — Modern E-Commerce Storefront
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-success?style=for-the-badge&logo=vercel)](https://datheonfullstackwebdevelopmentinter-nu.vercel.app/)
+
 A complete, production-quality e-commerce UI built with **plain HTML, CSS, and vanilla JavaScript (ES modules)** — no frameworks, no build tools, no libraries.
+
+**Live Demo**: [https://datheonfullstackwebdevelopmentinter-nu.vercel.app/](https://datheonfullstackwebdevelopmentinter-nu.vercel.app/)
 
 ---
 
