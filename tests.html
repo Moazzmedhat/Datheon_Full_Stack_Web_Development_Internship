@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ShopWave — Unit Tests</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 2rem; max-width: 700px; margin: auto; }
+    h1   { margin-bottom: 1rem; }
+    p    { margin: .25rem 0; font-size: .9rem; }
+    .pass { color: #16a34a; }
+    .fail { color: #dc2626; font-weight: bold; }
+    #summary { margin-top: 1.5rem; padding: 1rem; border-radius: 8px; font-weight: 600; }
+    #summary.ok   { background:#dcfce7; color:#15803d; }
+    #summary.fail { background:#fee2e2; color:#b91c1c; }
+    pre  { background:#f1f5f9; padding:1rem; border-radius:6px; font-size:.8rem; overflow:auto; }
+  </style>
+</head>
+<body>
+<h1>ShopWave — Unit Tests</h1>
+<p>Open the browser console for detailed output. Results also appear below.</p>
+<div id="results"></div>
+<div id="summary"></div>
+
+<script type="module">
+  import { calculateTotals } from './js/utils.js';
+  import { addItem, removeItem, incrementItem, decrementItem, clearCart, getCart, subscribe } from './js/state.js';
+
+  /* ---- tiny test harness ---- */
+  let passed = 0;
+  let failed = 0;
+  const resultsEl = document.getElementById('results');
+
+  function assert(condition, label) {
+    // Mirror to console (spec requirement)
+    console.assert(condition, label);
+    const ok = Boolean(condition);
+    if (ok) passed++;
+    else   failed++;
+    const p = document.createElement('p');
+    p.className = ok ? 'pass' : 'fail';
+    p.textContent = `${ok ? '✓' : '✗'} ${label}`;
+    resultsEl.appendChild(p);
+    return ok;
+  }
+
+  function heading(text) {
+    const h = document.createElement('h2');
+    h.style.cssText = 'font-size:1rem;margin-top:1.25rem;margin-bottom:.25rem;';
+    h.textContent = text;
+    resultsEl.appendChild(h);
+  }
+
+  /* ================================================================
+     1. calculateTotals — pure function tests
+     ================================================================ */
+  heading('calculateTotals — basic');
+
+  const emptyTotals = calculateTotals([]);
+  assert(emptyTotals.subtotalCents === 0,         'empty cart: subtotalCents = 0');
+  assert(emptyTotals.taxCents === 0,              'empty cart: taxCents = 0');
+  assert(emptyTotals.shippingCents === 599,       'empty cart: shipping = $5.99');
+  assert(emptyTotals.totalCents === 599,          'empty cart: total = $5.99');
+  assert(emptyTotals.isFreeShipping === false,    'empty cart: not free shipping');
+
+  heading('calculateTotals — single item');
+
+  // 1 item @ $10.00 → subtotal 1000¢, tax 80¢, shipping 599¢, total 1679¢
+  const singleCart = [{ id: 1, title: 'A', price: 10.00, image: '', quantity: 1 }];
+  const st = calculateTotals(singleCart);
+  assert(st.subtotalCents === 1000,  'single $10 item: subtotal = 1000¢');
+  assert(st.taxCents === 80,         'single $10 item: tax = 80¢ (8%)');
+  assert(st.shippingCents === 599,   'single $10 item: shipping = 599¢');
+  assert(st.totalCents === 1679,     'single $10 item: total = 1679¢');
+  assert(st.isFreeShipping === false,'single $10 item: not free shipping');
+  assert(Math.abs(st.subtotal - 10.00) < 0.001, 'single $10 item: subtotal dollar = 10.00');
+
+  heading('calculateTotals — free shipping threshold');
+
+  // exactly $50 subtotal → free shipping
+  const cart50 = [{ id: 2, title: 'B', price: 25.00, image: '', quantity: 2 }];
+  const t50 = calculateTotals(cart50);
+  assert(t50.subtotalCents === 5000,  'two $25 items: subtotal = 5000¢');
+  assert(t50.isFreeShipping === true, 'two $25 items ($50 subtotal): free shipping');
+  assert(t50.shippingCents === 0,     'free shipping: shippingCents = 0');
+  assert(t50.amountUntilFreeShipping === 0, 'free shipping: amountUntilFreeShipping = 0');
+
+  // $49.99 → not free
+  const cart4999 = [{ id: 3, title: 'C', price: 49.99, image: '', quantity: 1 }];
+  const t4999 = calculateTotals(cart4999);
+  assert(t4999.isFreeShipping === false,  '$49.99 subtotal: not free shipping');
+  assert(Math.abs(t4999.amountUntilFreeShipping - 0.01) < 0.001,
+                                          '$49.99 subtotal: $0.01 until free shipping');
+
+  heading('calculateTotals — quantity multiplies correctly');
+
+  const multiQty = [{ id: 4, title: 'D', price: 5.00, image: '', quantity: 3 }];
+  const tmq = calculateTotals(multiQty);
+  assert(tmq.subtotalCents === 1500, '3 × $5 items: subtotal = 1500¢');
+
+  heading('calculateTotals — floating-point safety');
+
+  // 0.1 + 0.2 would be 0.30000000000000004 in naive floats
+  const floatCart = [
+    { id: 5, title: 'E', price: 0.10, image: '', quantity: 1 },
+    { id: 6, title: 'F', price: 0.20, image: '', quantity: 1 },
+  ];
+  const tf = calculateTotals(floatCart);
+  assert(tf.subtotalCents === 30,    '0.10 + 0.20 in cents = 30 (no float error)');
+  assert(tf.subtotal === 0.30,       '0.10 + 0.20 displayed as 0.30');
+
+  heading('calculateTotals — multiple items mixed prices');
+
+  // 2 × $14.99 + 1 × $7.50
+  // subtotal = 2*1499 + 750 = 3748¢ = $37.48
+  // tax = round(3748 * 0.08) = round(299.84) = 300¢
+  // shipping = 599¢ (< $50)
+  // total = 3748 + 300 + 599 = 4647¢
+  const mixedCart = [
+    { id: 7,  title: 'G', price: 14.99, image: '', quantity: 2 },
+    { id: 8,  title: 'H', price: 7.50,  image: '', quantity: 1 },
+  ];
+  const tm = calculateTotals(mixedCart);
+  assert(tm.subtotalCents === 3748, 'mixed cart: subtotal = 3748¢');
+  assert(tm.taxCents === 300,       'mixed cart: tax = 300¢');
+  assert(tm.shippingCents === 599,  'mixed cart: shipping = 599¢');
+  assert(tm.totalCents === 4647,    'mixed cart: total = 4647¢');
+
+  /* ================================================================
+     2. Cart state mutations
+     ================================================================ */
+  heading('state — addItem / quantity deduplication');
+
+  // Clear any existing state from localStorage (run in isolation)
+  clearCart();
+
+  const p1 = { id: 101, title: 'Widget', price: 9.99, image: 'x.jpg', category: 'electronics', rating: { rate:4, count:100 } };
+  const p2 = { id: 102, title: 'Gadget', price: 19.99, image: 'y.jpg', category: 'electronics', rating: { rate:4, count:100 } };
+
+  addItem(p1);
+  assert(getCart().length === 1,                    'addItem: cart has 1 item');
+  assert(getCart()[0].quantity === 1,               'addItem: quantity is 1');
+
+  addItem(p1); // adding same product again
+  assert(getCart().length === 1,                    'addItem duplicate: still 1 line item');
+  assert(getCart()[0].quantity === 2,               'addItem duplicate: quantity incremented to 2');
+
+  addItem(p2);
+  assert(getCart().length === 2,                    'addItem different product: cart has 2 lines');
+
+  heading('state — incrementItem / decrementItem');
+
+  incrementItem(p1.id);
+  assert(getCart().find(i=>i.id===p1.id).quantity === 3, 'incrementItem: quantity goes 2→3');
+
+  decrementItem(p1.id);
+  assert(getCart().find(i=>i.id===p1.id).quantity === 2, 'decrementItem: quantity goes 3→2');
+
+  heading('state — decrement at 1 removes item');
+
+  decrementItem(p2.id); // p2 qty is 1 → should remove
+  assert(getCart().find(i=>i.id===p2.id) === undefined, 'decrementItem at qty=1: item removed');
+  assert(getCart().length === 1,                        'decrementItem at qty=1: cart length is 1');
+
+  heading('state — removeItem');
+
+  removeItem(p1.id);
+  assert(getCart().length === 0, 'removeItem: cart is empty');
+
+  heading('state — clearCart');
+
+  addItem(p1);
+  addItem(p2);
+  clearCart();
+  assert(getCart().length === 0, 'clearCart: cart is empty');
+
+  heading('state — subscribe fires immediately');
+
+  let subFired = false;
+  const unsub = subscribe(cart => { subFired = true; });
+  assert(subFired === true, 'subscribe fires immediately with current state');
+  unsub(); // clean up
+
+  heading('state — subscribe unsubscribe works');
+
+  let callCount = 0;
+  const unsub2 = subscribe(() => callCount++);
+  const beforeUnsub = callCount;
+  unsub2();
+  addItem(p1); // should not trigger the unsubscribed listener
+  assert(callCount === beforeUnsub, 'unsubscribed listener not called after unsub');
+  clearCart();
+
+  /* ================================================================
+     Summary
+     ================================================================ */
+  const summaryEl = document.getElementById('summary');
+  summaryEl.className = failed === 0 ? 'ok' : 'fail';
+  summaryEl.textContent = `${passed} passed / ${failed} failed`;
+
+  if (failed === 0) {
+    console.log('%c All tests passed! ✓', 'color:green;font-weight:bold;font-size:14px');
+  } else {
+    console.error(`${failed} test(s) FAILED`);
+  }
+</script>
+</body>
+</html>

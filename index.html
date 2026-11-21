@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShopWave — Modern E-Commerce</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#" class="logo" aria-label="ShopWave home">
+        <svg aria-hidden="true" width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <circle cx="14" cy="14" r="14" fill="#6366f1"/>
+          <path d="M8 10h12l-2 8H10L8 10Z" fill="white"/>
+          <circle cx="11.5" cy="20.5" r="1.5" fill="white"/>
+          <circle cx="17.5" cy="20.5" r="1.5" fill="white"/>
+        </svg>
+        <span>ShopWave</span>
+      </a>
+
+      <button
+        id="cart-toggle"
+        class="cart-toggle"
+        aria-label="Open cart (0 items)"
+        aria-expanded="false"
+        aria-controls="cart-drawer"
+      >
+        <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+        <span id="cart-count" class="cart-badge" aria-hidden="true">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== MAIN ===== -->
+  <main class="container main-content">
+
+    <!-- Hero -->
+    <section class="hero" aria-label="Store hero">
+      <h1>Discover Amazing Products</h1>
+      <p>Shop the latest electronics, jewelry, and clothing — all in one place.</p>
+    </section>
+
+    <!-- Category Filters -->
+    <section aria-label="Category filters" class="filters-section">
+      <div id="filter-bar" class="filter-bar" role="group" aria-label="Filter by category">
+        <!-- Rendered by filters.js -->
+      </div>
+      <p id="product-count" class="product-count" aria-live="polite" aria-atomic="true"></p>
+    </section>
+
+    <!-- Product Grid -->
+    <section aria-label="Product catalog">
+      <div id="product-grid" class="product-grid" aria-live="polite" aria-atomic="false">
+        <!-- Rendered by productGrid.js -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2024 ShopWave. Prices in USD. Demo store — no real transactions.</p>
+    </div>
+  </footer>
+
+  <!-- ===== CART DRAWER ===== -->
+  <div id="cart-overlay" class="cart-overlay" aria-hidden="true"></div>
+
+  <aside
+    id="cart-drawer"
+    class="cart-drawer"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Shopping cart"
+    aria-hidden="true"
+  >
+    <div class="cart-drawer-header">
+      <h2 class="cart-title">Your Cart</h2>
+      <button id="cart-close" class="cart-close" aria-label="Close cart">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="4" y1="4" x2="16" y2="16"/>
+          <line x1="16" y1="4" x2="4" y2="16"/>
+        </svg>
+      </button>
+    </div>
+
+    <div id="cart-items" class="cart-items">
+      <!-- Rendered by cartDrawer.js -->
+    </div>
+
+    <div id="cart-summary" class="cart-summary">
+      <!-- Rendered by cartDrawer.js -->
+    </div>
+  </aside>
+
+  <!-- ===== CHECKOUT CONFIRMATION MODAL ===== -->
+  <div
+    id="confirm-modal"
+    class="modal-backdrop"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-title"
+    aria-hidden="true"
+  >
+    <div class="modal">
+      <div class="modal-icon">🎉</div>
+      <h2 id="modal-title">Order Placed!</h2>
+      <p>Thank you for your order. This is a demo store — no real payment was processed.</p>
+      <button id="modal-close" class="btn btn-primary btn-full">Continue Shopping</button>
+    </div>
+  </div>
+
+  <!-- ===== SCRIPTS (ES modules) ===== -->
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
